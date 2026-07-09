@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>保存到个人链接库</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="popup">
+    <header class="hero">
+      <div>
+        <p>Personal Link Library</p>
+        <h1>快速收藏</h1>
+      </div>
+      <button id="openLibraryBtn" class="icon-open" type="button" title="打开完整库">库</button>
+    </header>
+
+    <section class="quick-card">
+      <label>标题<input id="titleInput" type="text" placeholder="自动读取当前网页标题"></label>
+      <label>URL<input id="urlInput" type="url" placeholder="自动读取当前网页链接"></label>
+      <label>简介<textarea id="descriptionInput" rows="4" placeholder="自动读取网页 description，可在这里修改"></textarea></label>
+      <p id="message" class="message"></p>
+      <button id="saveBtn" class="primary" type="button">保存到个人链接库</button>
+    </section>
+
+    <details class="advanced">
+      <summary>高级信息：分类、标签、用途、Markdown 笔记</summary>
+      <div class="advanced-body">
+        <div class="grid">
+          <label>大类<input id="categoryGroupInput" type="text" value="未整理"></label>
+          <label>小分类<input id="categoryInput" type="text" value="未整理"></label>
+        </div>
+        <label>标签<input id="tagsInput" type="text" placeholder="逗号分隔"></label>
+        <label>使用场景<textarea id="useCaseInput" rows="3" placeholder="以后什么时候用"></textarea></label>
+        <label>Markdown 笔记<textarea id="markdownNoteInput" rows="4" placeholder="可选"></textarea></label>
+      </div>
+    </details>
+
+    <div class="actions secondary-actions">
+      <button id="exportBtn" type="button">导出 JSON</button>
+      <button id="clearFormBtn" type="button">清空表单</button>
+    </div>
+
+    <p class="hint">简介会自动读取网页 description 或正文首段。想无感收藏，直接用网页右键菜单。</p>
+  </main>
+  <script src="shared-storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

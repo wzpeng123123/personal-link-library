@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人链接库使用说明</title>
+  <style>
+    :root{--brand:#2563eb;--text:#101828;--muted:#667085;--line:#d8e0eb;--bg:#f6f8ff;--panel:#fff;--warn:#f79009;--ok:#12b76a}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eef4ff,#fff7ed);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.75}.wrap{max-width:980px;margin:0 auto;padding:34px 18px 56px}.hero{padding:28px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.88);box-shadow:0 18px 60px rgba(16,24,40,.08)}.hero p{color:var(--muted)}section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0;box-shadow:0 12px 40px rgba(16,24,40,.06)}h1{margin:0 0 8px;font-size:34px}h2{margin-top:0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{padding:16px;border:1px solid var(--line);border-radius:16px;background:#f8fbff}code,pre{background:#f2f4f7;border-radius:8px;padding:2px 6px}pre{padding:14px;overflow:auto}.warn{border-left:5px solid var(--warn)}.ok{border-left:5px solid var(--ok)}li{margin:6px 0}.btn{display:inline-block;margin-top:8px;padding:9px 12px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none;font-weight:800}@media(max-width:760px){.grid{grid-template-columns:1fr}h1{font-size:28px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="hero">
+      <h1>个人链接库使用说明</h1>
+      <p>这是一个本地优先的个人链接收藏和知识整理工具。适合保存 AI 工具、学习资料、GitHub 仓库、论文网站、教程页面和素材网站。</p>
+      <p><strong>正式使用建议安装浏览器扩展。HTML 备用版已放在 html-database 文件夹。</strong></p>
+    </div>
+
+    <section>
+      <h2>1. 怎么安装扩展？</h2>
+      <ol>
+        <li>先解压压缩包。</li>
+        <li>打开 Chrome：<code>chrome://extensions/</code>，或 Edge：<code>edge://extensions/</code>。</li>
+        <li>打开右上角的“开发者模式”。</li>
+        <li>点击“加载已解压的扩展程序”。</li>
+        <li><strong>选择项目里的 <code>extension</code> 文件夹。</strong></li>
+        <li>把扩展图标固定到浏览器右上角。</li>
+      </ol>
+      <p class="warn"><strong>注意：</strong>安装时不要选择整个项目根目录，要选择 <code>extension</code> 文件夹。</p>
+    </section>
+
+    <section class="ok">
+      <h2>2. 怎么收藏网页？</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>点扩展图标收藏</h3>
+          <p>弹窗会自动填标题、URL 和网页简介。你可以直接保存，也可以先修改分类、标签和笔记。</p>
+        </div>
+        <div class="card">
+          <h3>右键直接收藏</h3>
+          <p>网页空白处右键可以保存当前页面；对页面里的链接右键可以保存那个链接。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>3. 怎么打开完整库？</h2>
+      <ul>
+        <li>点击扩展弹窗里的“打开完整库”。</li>
+        <li>在网页右键菜单中选择“打开个人链接库完整库”。</li>
+        <li>打开完整库后，可以把这个页面加入浏览器书签栏。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4. 完整库能做什么？</h2>
+      <ul>
+        <li>按大类、小分类、标签、状态管理链接。</li>
+        <li>搜索标题、网址、简介、用途和 Markdown 笔记。</li>
+        <li>导入浏览器书签 HTML。</li>
+        <li>导入 / 导出 JSON 备份。</li>
+        <li>复制 Markdown 卡片，方便整理资料或发给别人。</li>
+        <li>切换浅色 / 深色模式。</li>
+      </ul>
+    </section>
+
+    <section class="warn">
+      <h2>5. 数据保存在哪里？怎么备份？</h2>
+      <p>数据默认保存在浏览器扩展的本地存储中，不需要账号，也不会上传到服务器。</p>
+      <p>卸载扩展、清理浏览器数据、换电脑、换浏览器之前，请先在完整库里点击“导出备份”。</p>
+    </section>
+
+    <section>
+      <h2>6. 文件怎么理解？</h2>
+      <pre>README.md       GitHub 项目说明
+使用说明.html    普通用户双击看的说明页
+extension/      浏览器扩展主程序
+html-database/index.html      本地网页版备用入口
+CHANGELOG.md    版本记录
+LICENSE         开源许可证</pre>
+    </section>
+  </main>
+<footer style="margin:24px 0;color:#64748b;font-size:13px;text-align:center;">当前版本：v2.0.0。上传 GitHub 请查看 GitHub上传完整教程.md。</footer>
+</body>
+</html>

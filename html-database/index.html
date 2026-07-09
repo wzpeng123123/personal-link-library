@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人链接库</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="title-block">
+        <p class="eyebrow">Local Link Library</p>
+        <h1>个人链接库</h1>
+      </div>
+
+      <div class="top-actions">
+        <label class="search-box" for="searchInput">
+          <span>搜索</span>
+          <input id="searchInput" type="search" placeholder="标题、网址、分类、标签、简介、使用场景、Markdown 笔记">
+        </label>
+        <button id="addLinkBtn" class="primary-btn" type="button">+ 添加链接</button>
+        <button id="appearanceBtn" class="ghost-btn" type="button">外观设置</button>
+        <button id="connectJsonBtn" class="ghost-btn" type="button">连接 JSON 文件</button>
+        <button id="importBtn" class="ghost-btn" type="button">导入 JSON</button>
+        <button id="exportBtn" class="ghost-btn" type="button">导出 JSON</button>
+        <input id="importFileInput" class="hidden-file" type="file" accept="application/json,.json">
+      </div>
+    </header>
+
+    <main id="dashboard" class="dashboard">
+      <aside id="filterPanel" class="filter-panel" aria-label="筛选条件">
+        <div class="filter-panel-header">
+          <div class="filter-title">
+            <p class="eyebrow">Filters</p>
+            <h2>筛选栏</h2>
+          </div>
+          <button id="sidebarToggleBtn" class="sidebar-toggle" type="button" aria-expanded="true" aria-controls="filterPanelBody" title="收起侧栏">
+            <span class="toggle-icon" aria-hidden="true">‹</span>
+            <span class="toggle-text">收起</span>
+          </button>
+        </div>
+
+        <div id="filterPanelBody" class="filter-panel-body">
+          <section class="filter-section" data-section="categories">
+            <div class="section-header">
+              <button class="section-toggle" type="button" data-action="toggle-section" data-section="categories">
+                <span class="section-caret">▾</span>
+                <span>分类</span>
+              </button>
+              <button class="mini-btn" type="button" data-action="add-group">+ 大类</button>
+            </div>
+            <div id="categoryTree" class="category-tree"></div>
+          </section>
+
+          <section class="filter-section" data-section="statuses">
+            <div class="section-header">
+              <button class="section-toggle" type="button" data-action="toggle-section" data-section="statuses">
+                <span class="section-caret">▾</span>
+                <span>状态</span>
+              </button>
+            </div>
+            <div id="statusFilters" class="filter-list"></div>
+          </section>
+
+          <section class="filter-section" data-section="tags">
+            <div class="section-header">
+              <button class="section-toggle" type="button" data-action="toggle-section" data-section="tags">
+                <span class="section-caret">▾</span>
+                <span>标签</span>
+              </button>
+            </div>
+            <div id="tagFilters" class="tag-filter-list"></div>
+          </section>
+        </div>
+      </aside>
+
+      <section class="content-area" aria-live="polite">
+        <div class="summary-bar">
+          <div class="summary-count"><strong id="resultCount">0</strong><span> 条链接</span></div>
+          <div class="summary-actions">
+            <span id="activeFilterText" class="active-filter-text">全部数据</span>
+            <label class="sort-control" for="sortSelect">排序
+              <select id="sortSelect">
+                <option value="updated-desc">最近更新</option>
+                <option value="created-desc">最近添加</option>
+                <option value="opened-desc">最近打开</option>
+                <option value="rating-desc">评分最高</option>
+                <option value="title-asc">标题 A-Z</option>
+              </select>
+            </label>
+            <button id="expandAllBtn" class="ghost-btn small-btn" type="button">展开当前</button>
+            <button id="collapseAllBtn" class="ghost-btn small-btn" type="button">收起当前</button>
+            <span id="storageStatus" class="storage-status">浏览器自动保存</span>
+            <button id="clearFiltersBtn" class="text-btn" type="button">清空筛选</button>
+          </div>
+        </div>
+
+        <div id="batchBar" class="batch-bar" hidden>
+          <div>已选择 <strong id="selectedCount">0</strong> 项</div>
+          <div class="batch-actions">
+            <button id="selectAllVisibleBtn" class="ghost-btn small-btn" type="button">全选当前结果</button>
+            <button id="clearSelectionBtn" class="ghost-btn small-btn" type="button">取消选择</button>
+            <button id="batchEditBtn" class="primary-btn small-btn" type="button">批量编辑</button>
+            <button id="batchDeleteBtn" class="ghost-btn danger-btn small-btn" type="button">批量删除</button>
+          </div>
+        </div>
+
+        <div id="linkList" class="link-list"></div>
+        <div id="emptyState" class="empty-state" hidden>
+          <h2>没有找到链接</h2>
+          <p>换一个关键词或清空筛选后再试。</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="linkDialog" class="link-dialog">
+    <form id="linkForm" method="dialog" class="link-form">
+      <div class="dialog-header">
+        <div><p class="eyebrow">Link Details</p><h2 id="dialogTitle">添加链接</h2></div>
+        <button id="closeDialogBtn" class="icon-btn" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="form-grid">
+        <label>标题<input id="titleInput" name="title" type="text" required></label>
+        <label>URL<input id="urlInput" name="url" type="url" placeholder="https://example.com" required></label>
+        <label>大类 / 文件夹<input id="categoryGroupInput" name="categoryGroup" type="text" list="categoryGroupOptions" required><datalist id="categoryGroupOptions"></datalist></label>
+        <label>小分类<input id="categoryInput" name="category" type="text" list="categoryOptions" required><datalist id="categoryOptions"></datalist></label>
+        <label>标签<input id="tagsInput" name="tags" type="text" placeholder="逗号分隔，例如 AI, 写作, 资料"></label>
+        <label>评分<select id="ratingInput" name="rating"><option value="1">1 星</option><option value="2">2 星</option><option value="3">3 星</option><option value="4">4 星</option><option value="5">5 星</option></select></label>
+        <label>状态<select id="statusInput" name="status"></select></label>
+      </div>
+      <label>这个网站是干什么的<textarea id="descriptionInput" name="description" rows="3" required></textarea></label>
+      <label>以后什么时候用<textarea id="useCaseInput" name="useCase" rows="3" required></textarea></label>
+      <label>Markdown 笔记<textarea id="markdownNoteInput" name="markdownNote" rows="7" placeholder="支持 #标题、-列表、**加粗**、`代码`、链接等常用 Markdown"></textarea></label>
+      <p id="formError" class="form-error" role="alert"></p>
+      <div class="dialog-actions"><button id="cancelFormBtn" class="ghost-btn" type="button">取消</button><button class="primary-btn" type="submit">保存</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="batchDialog" class="link-dialog compact-dialog">
+    <form id="batchForm" method="dialog" class="link-form">
+      <div class="dialog-header"><div><p class="eyebrow">Batch Edit</p><h2>批量编辑</h2></div><button id="closeBatchDialogBtn" class="icon-btn" type="button" aria-label="关闭">×</button></div>
+      <p class="hint-text">只会修改已勾选的收藏。空白字段不会覆盖。</p>
+      <div class="form-grid">
+        <label>移动到大类<input id="batchCategoryGroupInput" type="text" list="categoryGroupOptions" placeholder="不修改则留空"></label>
+        <label>移动到小分类<input id="batchCategoryInput" type="text" list="categoryOptions" placeholder="不修改则留空"></label>
+        <label>添加标签<input id="batchAddTagsInput" type="text" placeholder="逗号分隔，不添加则留空"></label>
+        <label>删除标签<input id="batchRemoveTagsInput" type="text" placeholder="逗号分隔，不删除则留空"></label>
+        <label>修改状态<select id="batchStatusInput"></select></label>
+        <label>修改评分<select id="batchRatingInput"><option value="">不修改</option><option value="1">1 星</option><option value="2">2 星</option><option value="3">3 星</option><option value="4">4 星</option><option value="5">5 星</option></select></label>
+      </div>
+      <div class="dialog-actions"><button id="cancelBatchFormBtn" class="ghost-btn" type="button">取消</button><button class="primary-btn" type="submit">应用批量修改</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="appearanceDialog" class="link-dialog compact-dialog">
+    <form id="appearanceForm" method="dialog" class="link-form">
+      <div class="dialog-header"><div><p class="eyebrow">Appearance</p><h2>外观设置</h2></div><button id="closeAppearanceDialogBtn" class="icon-btn" type="button" aria-label="关闭">×</button></div>
+      <div class="form-grid">
+        <label>背景模式<select id="backgroundModeInput"><option value="soft">柔和浅色</option><option value="gradient">渐变背景</option><option value="dark">深色模式</option><option value="image">自定义图片</option></select></label>
+        <label>主色调<input id="accentColorInput" type="color" value="#2563eb"></label>
+        <label>背景图片 URL<input id="backgroundImageInput" type="url" placeholder="https://..."></label>
+        <label>卡片透明度<input id="panelOpacityInput" type="range" min="0.72" max="1" step="0.02" value="0.96"></label>
+        <label>圆角大小<input id="radiusInput" type="range" min="8" max="26" step="1" value="16"></label>
+      </div>
+      <div class="dialog-actions"><button id="resetAppearanceBtn" class="ghost-btn" type="button">恢复默认</button><button id="cancelAppearanceBtn" class="ghost-btn" type="button">取消</button><button class="primary-btn" type="submit">保存外观</button></div>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>

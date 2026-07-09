@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人链接库 - 工作台版</title>
+  <link rel="stylesheet" href="library.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="title-block">
+        <p class="eyebrow">Extension Library</p>
+        <h1>个人链接库工作台</h1>
+      </div>
+      <div class="top-actions">
+        <label class="search-box" for="searchInput"><span>搜索</span><input id="searchInput" type="search" placeholder="标题、网址、分类、标签、简介、Markdown 笔记"></label>
+        <button id="addLinkBtn" class="primary-btn" type="button">+ 添加链接</button>
+        <button id="exportBtn" class="ghost-btn" type="button">导出备份 JSON</button>
+        <button id="importBtn" class="ghost-btn" type="button">导入 JSON</button>
+        <button id="importBookmarkBtn" class="ghost-btn" type="button">导入浏览器书签 HTML</button>
+        <button id="themeToggleBtn" class="ghost-btn theme-toggle" type="button">深色模式</button>
+        <button id="clearAllBtn" class="ghost-btn danger-btn" type="button">清空数据</button>
+        <input id="importFileInput" class="hidden-file" type="file" accept="application/json,.json">
+        <input id="bookmarkFileInput" class="hidden-file" type="file" accept="text/html,.html,.htm">
+      </div>
+    </header>
+
+    <div id="backupNotice" class="backup-notice" hidden>
+      <div><strong id="backupTitle">建议备份</strong><p id="backupText">你的收藏数据建议定期导出备份。</p></div>
+      <div class="backup-actions"><button id="backupNowBtn" class="primary-btn small-btn" type="button">立即备份</button><button id="dismissBackupBtn" class="ghost-btn small-btn" type="button">今天先不提醒</button></div>
+    </div>
+
+
+    <main id="dashboard" class="dashboard workbench-dashboard">
+      <aside id="filterPanel" class="filter-panel">
+        <div class="filter-panel-header">
+          <div class="filter-title"><p class="eyebrow">Filters</p><h2>筛选栏</h2></div>
+          <button id="sidebarToggleBtn" class="sidebar-toggle" type="button"><span class="toggle-icon">‹</span><span class="toggle-text">收起</span></button>
+        </div>
+        <div id="filterPanelBody" class="filter-panel-body">
+          <section class="filter-section" data-section="categories">
+            <div class="section-header"><button class="section-toggle" type="button" data-action="toggle-section" data-section="categories"><span class="section-caret">▾</span><span>分类</span></button><button class="mini-btn" type="button" data-action="add-group">+ 大类</button></div>
+            <div id="categoryTree" class="category-tree"></div>
+            <p class="side-hint">可拖拽大类、小分类排序；也可把链接拖到分类里。</p>
+          </section>
+          <section class="filter-section" data-section="statuses"><div class="section-header"><button class="section-toggle" type="button" data-action="toggle-section" data-section="statuses"><span class="section-caret">▾</span><span>状态</span></button><button class="mini-btn" type="button" data-action="add-status">+ 状态</button></div><div id="statusFilters" class="filter-list"></div></section>
+          <section class="filter-section" data-section="tags"><div class="section-header"><button class="section-toggle" type="button" data-action="toggle-section" data-section="tags"><span class="section-caret">▾</span><span>标签</span></button><button class="mini-btn" type="button" data-action="add-tag">+ 标签</button></div><div id="tagFilters" class="tag-filter-list"></div></section>
+        </div>
+      </aside>
+
+      <section class="content-area">
+        <div class="summary-bar compact-toolbar">
+          <div class="summary-left">
+            <div class="summary-count"><strong id="resultCount">0</strong><span> 条链接</span></div>
+            <div class="compact-stats" aria-label="数据概览">
+              <span>总 <strong id="statsTotal">0</strong></span>
+              <span>收件箱 <strong id="statsInbox">0</strong></span>
+              <span>常用 <strong id="statsCommon">0</strong></span>
+              <span>待研究 <strong id="statsResearch">0</strong></span>
+              <span>失效 <strong id="statsBroken">0</strong></span>
+              <span>备份 <strong id="statsBackup">无</strong></span>
+            </div>
+          </div>
+          <div class="summary-actions">
+            <span id="activeFilterText" class="active-filter-text">全部数据</span>
+            <label class="sort-control" for="sortSelect">排序<select id="sortSelect"><option value="updated-desc">最近更新</option><option value="created-desc">最近添加</option><option value="opened-desc">最近打开</option><option value="rating-desc">评分最高</option><option value="title-asc">标题 A-Z</option><option value="manual">自定义顺序</option></select></label>
+            <label class="sort-control" for="viewModeSelect">视图<select id="viewModeSelect"><option value="standard">标准列表</option><option value="compact">紧凑列表</option><option value="card">卡片视图</option></select></label>
+            <button id="expandAllBtn" class="ghost-btn small-btn" type="button">展开详情</button>
+            <button id="collapseAllBtn" class="ghost-btn small-btn" type="button">收起详情</button>
+            <button id="clearFiltersBtn" class="text-btn" type="button" hidden>恢复全部</button>
+          </div>
+        </div>
+
+        <div id="batchBar" class="batch-bar" hidden>
+          <div>已选择 <strong id="selectedCount">0</strong> 项</div>
+          <div class="batch-actions"><button id="selectAllVisibleBtn" class="ghost-btn small-btn" type="button">全选当前结果</button><button id="clearSelectionBtn" class="ghost-btn small-btn" type="button">取消选择</button><button id="batchEditBtn" class="primary-btn small-btn" type="button">批量编辑</button><button id="batchDeleteBtn" class="ghost-btn danger-btn small-btn" type="button">批量删除</button></div>
+        </div>
+
+        <div id="linkList" class="link-list"></div>
+        <div id="emptyState" class="empty-state" hidden><h2>没有收藏</h2><p>先用插件弹窗收藏当前网页，或者导入浏览器书签 HTML。</p></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="linkDialog" class="link-dialog">
+    <form id="linkForm" method="dialog" class="link-form">
+      <div class="dialog-header"><div><p class="eyebrow">Link Details</p><h2 id="dialogTitle">添加链接</h2></div><button id="closeDialogBtn" class="icon-btn" type="button">×</button></div>
+      <div class="form-grid">
+        <label>标题<input id="titleInput" type="text" required></label>
+        <label>URL<input id="urlInput" type="url" required></label>
+        <label>图标 URL<input id="faviconInput" type="url" placeholder="自动抓取或留空"></label>
+        <label>大类 / 文件夹<input id="categoryGroupInput" type="text" list="categoryGroupOptions" required><datalist id="categoryGroupOptions"></datalist></label>
+        <label>小分类<input id="categoryInput" type="text" list="categoryOptions" required><datalist id="categoryOptions"></datalist></label>
+        <label>标签<input id="tagsInput" type="text" placeholder="逗号分隔，例如 AI, 写作"></label>
+        <label>评分<select id="ratingInput"><option value="1">1 星</option><option value="2">2 星</option><option value="3">3 星</option><option value="4">4 星</option><option value="5">5 星</option></select></label>
+        <label>状态<select id="statusInput"></select></label>
+      </div>
+      <label>这个网站是干什么的<textarea id="descriptionInput" rows="3" required></textarea></label>
+      <label>以后什么时候用<textarea id="useCaseInput" rows="3" required></textarea></label>
+      <label>Markdown 笔记<textarea id="markdownNoteInput" rows="7"></textarea></label>
+      <p id="formError" class="form-error"></p>
+      <div class="dialog-actions"><button id="cancelFormBtn" class="ghost-btn" type="button">取消</button><button class="primary-btn" type="submit">保存</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="batchDialog" class="link-dialog compact-dialog">
+    <form id="batchForm" method="dialog" class="link-form">
+      <div class="dialog-header"><div><p class="eyebrow">Batch Edit</p><h2>批量编辑</h2></div><button id="closeBatchDialogBtn" class="icon-btn" type="button">×</button></div>
+      <p class="hint-text">空白字段不会修改。</p>
+      <div class="form-grid">
+        <label>移动到大类<input id="batchCategoryGroupInput" type="text" list="categoryGroupOptions"></label>
+        <label>移动到小分类<input id="batchCategoryInput" type="text" list="categoryOptions"></label>
+        <label>添加标签<input id="batchAddTagsInput" type="text"></label>
+        <label>删除标签<input id="batchRemoveTagsInput" type="text"></label>
+        <label>修改状态<select id="batchStatusInput"></select></label>
+        <label>修改评分<select id="batchRatingInput"><option value="">不修改</option><option value="1">1 星</option><option value="2">2 星</option><option value="3">3 星</option><option value="4">4 星</option><option value="5">5 星</option></select></label>
+      </div>
+      <div class="dialog-actions"><button id="cancelBatchFormBtn" class="ghost-btn" type="button">取消</button><button class="primary-btn" type="submit">应用批量修改</button></div>
+    </form>
+  </dialog>
+
+  <script src="shared-storage.js"></script>
+  <script src="library.js"></script>
+</body>
+</html>

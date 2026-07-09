@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "个人链接库",
+  "version": "2.0.7",
+  "description": "个人链接库 v2.0.7：修复筛选栏底部内容无法完整滚动显示的问题。",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "downloads",
+    "scripting",
+    "contextMenus"
+  ],
+  "action": {
+    "default_title": "个人链接库",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "library.html"
+}
